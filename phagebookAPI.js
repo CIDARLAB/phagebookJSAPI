@@ -116,8 +116,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE 
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 				status: HEH%E%EH#E
 			}
          }
@@ -127,9 +127,9 @@
          */
         createStatus: function (username, password, status){
             return socket.emit("CREATE_STATUS", { 
-            		this.username: username, 
-            		this.password: password, 
-            		this.status: status
+            		this.username = username; 
+            		this.password = password; 
+            		this.status = status;
             	});
         }, 
 
@@ -138,8 +138,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 				id: HEH%E%EH#E
 				status: N#$Ofo8q83f7
 			}
@@ -150,10 +150,10 @@
          */
         chageOrderingStatus: function (username, password, orderID, orderStatus) {
             return socket.emit("CHANGE_ORDERING_STATUS", { 
-            		this.username: username, 
-            		this.password: password, 
-            		this.id: orderID,
-            		this.status: orderStatus
+            		this.username = username; 
+            		this.password = password; 
+            		this.id = orderID;
+            		this.status = orderStatus;
             	});
         }, 
 
@@ -162,8 +162,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 				id: HEH%E%EH#E
 				status: N#$Ofo8q83f7
 			}
@@ -174,10 +174,10 @@
          */
         createProjectStatus: function (username, password, projectID, projectStatus) {
             return socket.emit("CREATE_PROJECT_STATUS", { 
-            		this.username: username, 
-            		this.password: password, 
-            		this.id: projectID,
-            		this.status: projectStatus
+            		this.username = username;
+            		this.password = password; 
+            		this.id = projectID;
+            		this.status = projectStatus;
             	});
         }, 
 
@@ -186,8 +186,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 			}
          }
          Received: {
@@ -197,8 +197,11 @@
 			] x However many Projects there are
          }
          */
-        getProjects: function (username, password, options) {
-            return socket.emit("GET_PROJECTS", object);
+        getProjects: function (username, password) {
+            return socket.emit("GET_PROJECTS", {
+            	this.username = username;
+            	this.password = password;
+            });
         }, 
 
         /*
@@ -206,8 +209,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 			}
          }
          Received: {
@@ -217,8 +220,11 @@
 			] x However many orders there are
          }
          */
-        getOrders: function (username, password, options) {
-            return socket.emit("GET_ORDERS", object);
+        getOrders: function (username, password) {
+            return socket.emit("GET_ORDERS", {
+            	this.username = username;
+            	this.password = password;
+            });
         }, 
 
         /*
@@ -226,8 +232,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 				id: QR@$FFEWGRES#$T% (The project ID)
 			}
          }
@@ -248,8 +254,12 @@
 			}
          }
          */
-        getProject: function (username, password, options) {
-            return socket.emit("GET_PROJECT", object);
+        getProject: function (username, password, projectID) {
+            return socket.emit("GET_PROJECT", {
+            	this.username = username;
+            	this.password = password;
+            	this.id = projectID;
+            });
         }, 
 
         /*
@@ -257,8 +267,8 @@
 			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
 			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
 			data: {
-				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
-				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				username: EH^%E^$EG
+				password: HDTEG%ED$%
 				id: QR@$FFEWGRES#$T% (The order ID)
 			}
          }
@@ -279,8 +289,12 @@
 			}
          }
          */
-        getOrder: function (username, password, options) {
-            return socket.emit("GET_ORDER", object);
+        getOrder: function (username, password, orderID) {
+            return socket.emit("GET_ORDER", {
+            	this.username = username;
+            	this.password = password;
+            	this.id = orderID;
+            });
         }
         
     };
