@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Clotho Test Page</title>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="../phagebookAPI.js"></script>
+        <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+        <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.js"></script>
+    </head>
+    <body>
+        <button id="connect" type="button" class="btn btn-primary btn-lg">Connect</button>
+        <button id="get" type="button" class="btn btn-success btn-lg">Get</button>
+        <button id="query" type="button" class="btn btn-success btn-lg">Query</button>
+        <button id="create" type="button" class="btn btn-success btn-lg">Create</button>
+        <button id="destroy" type="button" class="btn btn-success btn-lg">Destroy</button>
+        <button id="set" type="button" class="btn btn-success btn-lg">Set</button>
+        <button id="createAll" type="button" class="btn btn-success btn-lg">Create All</button>
+        <button id="queryOne" type="button" class="btn btn-success btn-lg">Query One</button>
+
+        <script>
+            $(document).ready(function() { 
+                $("#connect").click(function() {
+                    alert("Connecting");
+                });
+                $("#get").click(function() {
+                    Clotho.get("My New Part").then(function(data) {
+                        alert(data.name);
+                    }).done();
+                });
+                $("#query").click(function() {
+                    Clotho.query("schema", "CompositePart").then(function(data) {
+                        alert(data.length);
+                    }).done();
+                });
+                $("#queryOne").click(function() {
+                    Clotho.queryOne("schema", "CompositePart").then(function(data) {
+                        alert(data.name);
+                    }).done();
+                });
+                $("#create").click(function() {
+                    obj = {"name":"My New Part", "sequence":"GGGGGG"};
+                    Clotho.create(obj);
+                    Clotho.get("My New Part").then(function(data) {
+                        alert(data.sequence);
+                    }).done();
+                    // Clotho.create(obj).then(function(id) {
+                    //     Clotho.get(id).then(function(data) {
+                    //         alert(data.sequence);
+                    //     }).done();
+                    // });
+                });
+                $("#createAll").click(function() {
+                    Clotho.create([{"name":"My New Part", "sequence":"GGGGGG"},{"name":"My Second Part", "sequence":"AAACCC"}]).then(function(id) {
+                        alert(JSON.stringify(id));        
+                    }).done();
+                });
+                $("#destroy").click(function() {
+                    Clotho.destroy("My New Part");
+                });
+                $("#set").click(function() {
+                    Clotho.get("Test Part 1").then(function(data) {
+                        alert(data.name);
+                        storeID = data.id;
+                        Clotho.set({"id":storeID, "name":"Kev's Trial Part"}).then(function(data2) {
+                            Clotho.get(storeID).then(function(data3) {
+                                alert(data3.name);
+                                Clotho.set({"id":storeID, "name":"Test Part 1"}).then(function(data4) {
+                                    Clotho.get(storeID).then(function(data5) {
+                                        alert(data5.name);
+                                    }).done()
+                                });
+                            });
+                        });
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

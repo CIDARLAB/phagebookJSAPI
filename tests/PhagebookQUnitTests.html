@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Clotho Test Page</title>
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.12.0.css">
+        <script src="http://code.jquery.com/qunit/qunit-1.12.0.js"></script>
+        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script type="text/javascript" src="../phagebookAPI.js"></script>
+        <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.js"></script>
+    </head>
+    <body>
+        <script>
+            $(document).ready(function() { 
+                alert("Connect and shit.");
+                
+                module("Server API Tests");
+                
+                asyncTest("GET", function() {
+                    Clotho.get("Test Part 1").then(function(data) {
+                        equal(data.name, "Test Part 1");
+                        start();
+                    }).done();
+                });
+                
+                asyncTest("Get All", function() {   
+                    Clotho.get(["Test Part 1", "Test Part 2", "Test Part 3"]).then(function(data) {
+                        equal(data.length, 3);
+                        equal(data[0].name, "Test Part 1");
+                        equal(data[1].name, "Test Part 2");
+                        equal(data[2].name, "Test Part 3");
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Query Parts", function() {
+                    Clotho.query("schema", "Part").then(function(data) {
+                        equal(data.length, 55);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Query BasicParts", function() {
+                    Clotho.query("schema","BasicPart").then(function(data) {
+                        equal(data.length, 54);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Query CompositeParts", function() {
+                    Clotho.query("schema","CompositePart").then(function(data) {
+                        equal(data.length, 1);
+                        data = data[0];
+                        equal(data.type, "COMPOSITE");
+                        ok(data.composition[0].substring);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Query One CompositePart", function() {
+                    Clotho.queryOne("schema","CompositePart").then(function(data) {
+                        equal(data.name, "Test Part 3");
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Create then Get", function() {
+                    obj = {"name":"My New Part", "sequence":"GGGGGG"};
+                    Clotho.create(obj).then(function(id) {
+                        Clotho.get(id).then(function(data) {
+                            equal(data.sequence, "GGGGGG");
+                            start();
+                        }).done();
+                    });
+                });
+
+                asyncTest("Create with schema, Get, then Destroy", function() {
+                    obj = {"name":"Created Part 2", "sequence":"CCCC", "schema":"BasicPart"};
+                    Clotho.create(obj).then(function(id) {
+                        Clotho.get("Created Part 2").then(function(data2) {
+                            ok(data2.hasOwnProperty("schema"));
+                            ok(!(data2.hasOwnProperty("className")));
+                            Clotho.destroy("Created Part 2");
+                            //TODO: ensure actually destroyed
+                            start();
+                        }).done();
+                    });
+                });
+
+                asyncTest("Set then Reset", function() {
+                    Clotho.get("Test Part 1").then(function(data) {
+                        partID = data.id;
+                        Clotho.set({"id":partID,"name":"Set Part"}).then(function(data2) {
+                            Clotho.get(partID).then(function(data3) {
+                                equal(data3.name, "Set Part");
+                                Clotho.set({"id":partID,"name":"Test Part 1"}).then(function(data4) {
+                                    Clotho.get(partID).then(function(data5) {
+                                        equal(data5.name, "Test Part 1");
+                                        start();
+                                    }).done();
+                                });
+                            });
+                        });
+                    });
+                });
+
+                asyncTest("Log In - Log Out", function() {
+                    Clotho.login("testuser", "password").then(function(data) {
+                        equal(data, true);
+                        Clotho.submit("var persistVar = 13").then(function(data) {
+                            Clotho.submit("persistVar").then(function(data) {
+                                equal(data, 13);
+                                Clotho.logout().then(function(data) {
+                                    equal(data, true);
+                                    Clotho.submit("persistVar").then(function(data) {
+                                        notEqual(data, 13, "Data not accessible on logout");
+                                        Clotho.login("testuser", "password").then(function(data) {
+                                            equal(data, true);
+                                            Clotho.submit("persistVar").then(function(data) {
+                                                equal(data, 13, "Data accessible upon subsequent login");
+                                                start();
+                                            }).done();
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                });
+
+                module("Functions and Modules")
+
+                asyncTest("Run: Module Scoping", function() {
+                    Clotho.run({function:"moduleTestFunction", args:[2]}).then(function(data) {
+                        equal(data, 5);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Run: Invoke Module Method", function() {
+                    Clotho.run({module:"testModule", function:"moduleMethod", args:[]}).then(function(data) {
+                        equal(data, 2);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Run: Use Lodash", function() {
+                    Clotho.run({function:"useLodash", args:[]}).then(function(data) {
+                        deepEqual(data, [2,3,4]);
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Submit: Functions with Arguments", function() {
+                    Clotho.submit("clotho.run('lowercase', ['HEY'])").then(function(data) {
+                        equal(data, "hey");
+                        start();
+                    }).done();
+                });
+
+                asyncTest("Submit: Import Nonexistent External Library", function() {
+                    Clotho.submit("load(\"yepnope.js\")").then(function(data) {
+                        equal(data, null);
+                        start();
+                    }).done();
+                });
+            });
+        </script>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+    </body>
+</html>

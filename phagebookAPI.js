@@ -13,7 +13,7 @@
     //                                              WebSocket                                                //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var socket = new WebSocket("wss://localhost:8443/websocket");
+    var socket = new WebSocket("wss://localhost:9090/websocket"); // Change this address to CNAME of Phagebook
     socket.messageCache = []; // Queue of potential socket messages that were sent before the socket was opened.
 
     socket.onopen = function() {
@@ -57,15 +57,16 @@
         }
     }
 
-    // Converts the data to send into a JSON format. (Kind of)
-    function Message(channel, data, requestID, options) {
-        this.channel = channel;
-        this.data = data;
-        this.requestId = requestID;
-        if (typeof options != undefined){
-            this.options = options;
-        }
-    }
+    // // Converts the data to send into a JSON format.
+    // function Message(channel, data, requestID, options) {
+    //     this.channel = channel;
+    //     this.data = data;
+    //     this.requestId = requestID;
+    //     if (typeof options != undefined){ 
+    //     // Create "options" parameter only when the protocal has options.
+    //         this.options = options;
+    //     }
+    // }
 
     // A generator would be nice
     var lastRequestId = -1;
@@ -76,130 +77,210 @@
 
     // Helper function: Sends message to server 
     // Will be called multiple times, changing "lastRequestId".
-    socket.emit = function(channel, data, options) {
+    socket.emit = function(channel, data) {
         // Create 'deferred' object ... Q is a global variable
         var deferred = Q.defer();
+
         var requestID = nextId();
-        // var message = '{"channel":"' + channel + '","data":"' + data + '","requestId":"' + requestID + '"}';
-        var message = new Message(channel, data, requestID, options);
+        var message = {
+	        this.channel = channel;
+	        this.data = data;
+	        this.requestId = requestID;
+        };
         var callback = function(dataFromServer) {
             deferred.resolve(dataFromServer);
         };
+        
         // Hash callback function: (channel + requestID) because we need to distinguish between "say" messages and desired responses from server. 
         callbackHash[channel + requestID] = callback; /////////// Indexing the hashtable.
         socket.sendwhenready(JSON.stringify(message));
         return deferred.promise;
     };
 
-    /**
-     * Returns [spec, options]
-     */
-    var parseQueryArgs = function(schema, name, options) {
-        if (typeof(schema) !== 'string') {
-            return {obj:schema, options:name};
-        }
-        else {
-            return {obj:{schema:name}, options:options};
-        }
-    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                          Phagebook Object                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     window.Phagebook = Phagebook.prototype = { //Phagebook function prototypes
 
-        /**Phagebook Websocket Channels:
-			CREATE_STATUS,
-			CHANGE_ORDERING_STATUS,
-			CREATE_PROJECT_STATUS,
-			GET_PROJECTS,
-			GET_ORDERS,
-			GET_PROJECT,
-			GET_ORDER
+    	/* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		*	Every app that uses phagebookAPI requires user credentials because all protocol returns a user specific info.
+		*	There are 2 ways to do this: Have a "user" object on the client namespace to interact with and retrieve data,
+		*	Or send the credentials with the desired socket command and let Phagebook search and return just the user specific data.
+    	*	As of 2016 June 29th, Phagebook Server Socket uses the second method. This could be changed.
+    	*	Currently the API directly accepts username and password as credentials. I'm not sure if this is a good practice or
+    	*	if something else should be passed on, but we'll see. - Joonho Han.
+    	*/
+
+         /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE 
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				status: HEH%E%EH#E
+			}
+         }
+         Received: {
+			data: "Status created blah blah"
+         }
          */
-
-
-
-
-
-
-         /**
-         * Phagebook.createStatus
-         * create the status of the user
-         */
-        createStatus: function (object, options) {
-            return socket.emit("createStatus", object, options);
+        createStatus: function (username, password, status){
+            return socket.emit("CREATE_STATUS", { 
+            		this.username: username, 
+            		this.password: password, 
+            		this.status: status
+            	});
         }, 
 
-        /**
-         * Phagebook.updateOrderStatus
-         * updates the status of the order
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				id: HEH%E%EH#E
+				status: N#$Ofo8q83f7
+			}
+         }
+         Received: {
+			data: "Status created blah blah"
+         }
          */
-        updateOrderStatus: function (object, options) {
-            return socket.emit("updateOrderStatus", object, options);
+        chageOrderingStatus: function (username, password, orderID, orderStatus) {
+            return socket.emit("CHANGE_ORDERING_STATUS", { 
+            		this.username: username, 
+            		this.password: password, 
+            		this.id: orderID,
+            		this.status: orderStatus
+            	});
         }, 
 
-        /**
-         * Phagebook.addToOrder
-         * add the object to user's orders
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				id: HEH%E%EH#E
+				status: N#$Ofo8q83f7
+			}
+         }
+         Received: {
+			data: "Status created successfully blah blah"
+         }
          */
-        addToOrder: function (object, options) {
-            return socket.emit("addToOrder", object, options);
+        createProjectStatus: function (username, password, projectID, projectStatus) {
+            return socket.emit("CREATE_PROJECT_STATUS", { 
+            		this.username: username, 
+            		this.password: password, 
+            		this.id: projectID,
+            		this.status: projectStatus
+            	});
         }, 
 
-        /**
-         * Phagebook.createProject
-         * create a project on Phagebook
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+			}
+         }
+         Received: {
+			data: [
+				projectId: B@#^EF@I#E
+				projectName: NF@$O&*G$
+			] x However many Projects there are
+         }
          */
-        createProject: function (object, options) {
-            return socket.emit("createProject", object, options);
+        getProjects: function (username, password, options) {
+            return socket.emit("GET_PROJECTS", object);
         }, 
 
-        /**
-         * Phagebook.addFriend
-         * add a friend on Phagebook
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+			}
+         }
+         Received: {
+			data: [
+				orderId: B@#^EF@I#E
+				orderName: NF@$O&*G$
+			] x However many orders there are
+         }
          */
-        addFriend: function (object, options) {
-            return socket.emit("addFriend", object, options);
+        getOrders: function (username, password, options) {
+            return socket.emit("GET_ORDERS", object);
         }, 
 
-        /**
-         * Phagebook.addTeamMember
-         * add a team member on Phagebook
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				id: QR@$FFEWGRES#$T% (The project ID)
+			}
+         }
+         Received: {
+			data: {
+				creatorId;
+                leadId;
+                members;
+                notebooks;
+                affiliatedLabs;
+                name;
+                dateCreated;
+                updates;
+                budget;
+                grantId;
+                description;
+                id;
+			}
+         }
          */
-        addTeamMember: function (object, options) {
-            return socket.emit("addTeamMember", object, options);
+        getProject: function (username, password, options) {
+            return socket.emit("GET_PROJECT", object);
         }, 
 
-        /**
-         * Phagebook.sendResult
-         * send the result of user's project to Phagebook
+        /*
+         Input: {
+			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
+			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
+			data: {
+				username (DEPENDS ON GLOBAL USER INFO): EH^%E^$EG
+				password (DEPENDS ON GLOBAL USER INFO): HDTEG%ED$%
+				id: QR@$FFEWGRES#$T% (The order ID)
+			}
+         }
+         Received: {
+			data: {
+				id;
+				name;
+				description;
+				dateCreated;
+				createdById;
+				products;
+				budget;
+				maxOrderSize;
+				approvedById;
+				receivedById;
+				relatedProjects;
+				status;
+			}
+         }
          */
-        sendResult: function (object, options) {
-            return socket.emit("sendResult", object, options);
-        }, 
-
-        /**
-         * Phagebook.sendSample
-         * send a sample of user's project to Phagebook
-         */
-        sendSample: function (object, options) {
-            return socket.emit("sendSample", object, options);
-        }, 
-
-        /**
-         * Phagebook.sendProtocol
-         * send protocals to Phagebook
-         */
-        sendProtocol: function (object, options) {
-            return socket.emit("sendProtocol", object, options);
-        }, 
-
-        /**
-         * Phagebook.addEntry
-         * add new entry on Phagebook
-         */
-        addEntry: function (object, options) {
-            return socket.emit("addEntry", object, options);
+        getOrder: function (username, password, options) {
+            return socket.emit("GET_ORDER", object);
         }
         
     };
