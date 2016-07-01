@@ -111,86 +111,53 @@
     	*	if something else should be passed on, but we'll see. - Joonho Han.
     	*/
 
-         /*
+    	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
+    	/**********The format of the emitted JSON Object*************
          Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE 
+			channel (HANDLED BY THE API): depends on function
+			requestID (HANDLED BY "emit"): random 
 			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-				status: HEH%E%EH#E
+				username: depends on user
+				password: depends on user
+				id: if exists
+				status: if exists
 			}
-         }
-         Received: {
+         }*/
+    	coreSocketData: function (username, password, id, status){ 
+    		this.username = username; 
+    		this.password = password; 
+    		this.id = id;
+	        if (typeof status != undefined){ 
+	        // Create "status" parameter only when the protocol has status.
+	            this.status = status;
+	        }
+	    },
+
+         /*Received: {
 			data: "Status created blah blah"
          }
          */
         createStatus: function (username, password, status){
-            return socket.emit("CREATE_STATUS", { 
-            		this.username = username; 
-            		this.password = password; 
-            		this.status = status;
-            	});
+            return socket.emit("CREATE_STATUS", new coreSocketData(username, password, null, status));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-				id: HEH%E%EH#E
-				status: N#$Ofo8q83f7
-			}
-         }
-         Received: {
+        /*Received: {
 			data: "Status created blah blah"
          }
          */
         chageOrderingStatus: function (username, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", { 
-            		this.username = username; 
-            		this.password = password; 
-            		this.id = orderID;
-            		this.status = orderStatus;
-            	});
+            return socket.emit("CHANGE_ORDERING_STATUS", new coreSocketData(username, password, orderID, orderStatus));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-				id: HEH%E%EH#E
-				status: N#$Ofo8q83f7
-			}
-         }
-         Received: {
+        /*Received: {
 			data: "Status created successfully blah blah"
          }
          */
         createProjectStatus: function (username, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", { 
-            		this.username = username;
-            		this.password = password; 
-            		this.id = projectID;
-            		this.status = projectStatus;
-            	});
+            return socket.emit("CREATE_PROJECT_STATUS", new coreSocketData(username, password, projectID, projectStatus));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-			}
-         }
-         Received: {
+        /*Received: {
 			data: [
 				projectId: B@#^EF@I#E
 				projectName: NF@$O&*G$
@@ -198,22 +165,10 @@
          }
          */
         getProjects: function (username, password) {
-            return socket.emit("GET_PROJECTS", {
-            	this.username = username;
-            	this.password = password;
-            });
+            return socket.emit("GET_PROJECTS", new coreSocketData(username, password, null, null));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-			}
-         }
-         Received: {
+        /*Received: {
 			data: [
 				orderId: B@#^EF@I#E
 				orderName: NF@$O&*G$
@@ -221,23 +176,10 @@
          }
          */
         getOrders: function (username, password) {
-            return socket.emit("GET_ORDERS", {
-            	this.username = username;
-            	this.password = password;
-            });
+            return socket.emit("GET_ORDERS", new coreSocketData(username, password, null, null));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-				id: QR@$FFEWGRES#$T% (The project ID)
-			}
-         }
-         Received: {
+        /*Received: {
 			data: {
 				creatorId;
                 leadId;
@@ -255,24 +197,10 @@
          }
          */
         getProject: function (username, password, projectID) {
-            return socket.emit("GET_PROJECT", {
-            	this.username = username;
-            	this.password = password;
-            	this.id = projectID;
-            });
+            return socket.emit("GET_PROJECT", new coreSocketData(username, password, projectID, null));
         }, 
 
-        /*
-         Input: {
-			channel (HANDLED BY THIS FUNCTION): asdfdsasdface
-			requestID (HANDLED BY "emit"): 5vede7cr8T%$YEYE
-			data: {
-				username: EH^%E^$EG
-				password: HDTEG%ED$%
-				id: QR@$FFEWGRES#$T% (The order ID)
-			}
-         }
-         Received: {
+        /*Received: {
 			data: {
 				id;
 				name;
@@ -290,11 +218,7 @@
          }
          */
         getOrder: function (username, password, orderID) {
-            return socket.emit("GET_ORDER", {
-            	this.username = username;
-            	this.password = password;
-            	this.id = orderID;
-            });
+            return socket.emit("GET_ORDER", new coreSocketData(username, password, orderID, null));
         }
         
     };
