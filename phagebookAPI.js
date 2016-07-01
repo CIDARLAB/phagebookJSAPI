@@ -126,7 +126,10 @@
     	coreSocketData: function (username, password, id, status){ 
     		this.username = username; 
     		this.password = password; 
-    		this.id = id;
+	        if (typeof id != undefined){ 
+	        // Create "id" parameter only when the protocol has id.
+	            this.id = id;
+	        }
 	        if (typeof status != undefined){ 
 	        // Create "status" parameter only when the protocol has status.
 	            this.status = status;
