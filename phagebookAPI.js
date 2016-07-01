@@ -13,7 +13,7 @@
     //                                              WebSocket                                                //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var socket = new WebSocket("wss://localhost:9090/websocket"); // Change this address to CNAME of Phagebook
+    var socket = new WebSocket("ws://localhost:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
     socket.messageCache = []; // Queue of potential socket messages that were sent before the socket was opened.
 
     socket.onopen = function() {
@@ -57,16 +57,42 @@
         }
     }
 
-    // // Converts the data to send into a JSON format.
-    // function Message(channel, data, requestID, options) {
-    //     this.channel = channel;
-    //     this.data = data;
-    //     this.requestId = requestID;
-    //     if (typeof options != undefined){ 
-    //     // Create "options" parameter only when the protocal has options.
-    //         this.options = options;
-    //     }
-    // }
+    // Creates the JSON object format.
+    function Message(channel, data, requestID, options) {
+        this.channel = channel;
+        this.data = data;
+        this.requestId = requestID;
+        if (typeof options != undefined){ 
+        // Create "options" parameter only when the protocal has options.
+            this.options = options;
+        }
+    }
+
+	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
+	/**********The format of the emitted JSON Object*************
+     Input: {
+		channel (HANDLED BY THE API): depends on function
+		requestID (HANDLED BY "emit"): random 
+		data: {
+			userEmail: depends on user
+			password: depends on user
+			id: if exists
+			status: if exists
+		}
+     }*/
+    // Converts the data to send to JSON
+    socket.formatToData = function(userEmail, password, id, status){ 
+		this.username = userEmail; 
+		this.password = password; 
+        if (typeof id != undefined){ 
+        // Create "id" parameter only when the protocol has id.
+            this.id = id;
+        }
+        if (typeof status != undefined){ 
+        // Create "status" parameter only when the protocol has status.
+            this.status = status;
+        }
+    }
 
     // A generator would be nice
     var lastRequestId = -1;
@@ -82,11 +108,7 @@
         var deferred = Q.defer();
 
         var requestID = nextId();
-        var message = {
-	        this.channel = channel;
-	        this.data = data;
-	        this.requestId = requestID;
-        };
+        var message = new Message(channel, data, requestID, null);
         var callback = function(dataFromServer) {
             deferred.resolve(dataFromServer);
         };
@@ -107,57 +129,32 @@
 		*	There are 2 ways to do this: Have a "user" object on the client namespace to interact with and retrieve data,
 		*	Or send the credentials with the desired socket command and let Phagebook search and return just the user specific data.
     	*	As of 2016 June 29th, Phagebook Server Socket uses the second method. This could be changed.
-    	*	Currently the API directly accepts username and password as credentials. I'm not sure if this is a good practice or
+    	*	Currently the API directly accepts userEmail and password as credentials. I'm not sure if this is a good practice or
     	*	if something else should be passed on, but we'll see. - Joonho Han.
     	*/
-
-    	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
-    	/**********The format of the emitted JSON Object*************
-         Input: {
-			channel (HANDLED BY THE API): depends on function
-			requestID (HANDLED BY "emit"): random 
-			data: {
-				username: depends on user
-				password: depends on user
-				id: if exists
-				status: if exists
-			}
-         }*/
-    	coreSocketData: function (username, password, id, status){ 
-    		this.username = username; 
-    		this.password = password; 
-	        if (typeof id != undefined){ 
-	        // Create "id" parameter only when the protocol has id.
-	            this.id = id;
-	        }
-	        if (typeof status != undefined){ 
-	        // Create "status" parameter only when the protocol has status.
-	            this.status = status;
-	        }
-	    },
 
          /*Received: {
 			data: "Status created blah blah"
          }
          */
-        createStatus: function (username, password, status){
-            return socket.emit("CREATE_STATUS", new coreSocketData(username, password, null, status));
+        createStatus: function (userEmail, password, status){
+            return socket.emit("CREATE_STATUS", new socket.formatToData(userEmail, password, null, status));
         }, 
 
         /*Received: {
-			data: "Status created blah blah"
+			data: "Status changed blah blah"
          }
          */
-        chageOrderingStatus: function (username, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", new coreSocketData(username, password, orderID, orderStatus));
+        chageOrderingStatus: function (userEmail, password, orderID, orderStatus) {
+            return socket.emit("CHANGE_ORDERING_STATUS", new socket.formatToData(userEmail, password, orderID, orderStatus));
         }, 
 
         /*Received: {
 			data: "Status created successfully blah blah"
          }
          */
-        createProjectStatus: function (username, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", new coreSocketData(username, password, projectID, projectStatus));
+        createProjectStatus: function (userEmail, password, projectID, projectStatus) {
+            return socket.emit("CREATE_PROJECT_STATUS", new socket.formatToData(userEmail, password, projectID, projectStatus));
         }, 
 
         /*Received: {
@@ -167,8 +164,8 @@
 			] x However many Projects there are
          }
          */
-        getProjects: function (username, password) {
-            return socket.emit("GET_PROJECTS", new coreSocketData(username, password, null, null));
+        getProjects: function (userEmail, password) {
+            return socket.emit("GET_PROJECTS", new socket.formatToData(userEmail, password, null, null));
         }, 
 
         /*Received: {
@@ -178,8 +175,8 @@
 			] x However many orders there are
          }
          */
-        getOrders: function (username, password) {
-            return socket.emit("GET_ORDERS", new coreSocketData(username, password, null, null));
+        getOrders: function (userEmail, password) {
+            return socket.emit("GET_ORDERS", new socket.formatToData(userEmail, password, null, null));
         }, 
 
         /*Received: {
@@ -199,8 +196,8 @@
 			}
          }
          */
-        getProject: function (username, password, projectID) {
-            return socket.emit("GET_PROJECT", new coreSocketData(username, password, projectID, null));
+        getProject: function (userEmail, password, projectID) {
+            return socket.emit("GET_PROJECT", new socket.formatToData(userEmail, password, projectID, null));
         }, 
 
         /*Received: {
@@ -220,8 +217,8 @@
 			}
          }
          */
-        getOrder: function (username, password, orderID) {
-            return socket.emit("GET_ORDER", new coreSocketData(username, password, orderID, null));
+        getOrder: function (userEmail, password, orderID) {
+            return socket.emit("GET_ORDER", new socket.formatToData(userEmail, password, orderID, null));
         }
         
     };
