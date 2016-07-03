@@ -13,7 +13,7 @@
     //                                              WebSocket                                                //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var socket = new WebSocket("ws://localhost:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
+    var socket = new WebSocket("ws://cidarlab.org:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
     socket.messageCache = []; // Queue of potential socket messages that were sent before the socket was opened.
 
     socket.onopen = function() {
@@ -32,7 +32,7 @@
     // The message is only received when the client sends message first. Thus, the messages received are the serverside response.
     socket.onmessage = function(evt) {
         // Parse message into JSON 
-        var dataJSON = JSON.parse(evt.data);
+        var dataJSON = JSON.parse(evt.data); // This "data" is not the same as
         var channel = dataJSON.channel;
         var requestId = dataJSON.requestId;
         if (requestId !== null) {
@@ -69,19 +69,7 @@
     }
 
 	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
-	/**********The format of the emitted JSON Object*************
-     Input: {
-		channel (HANDLED BY THE API): depends on function
-		requestID (HANDLED BY "emit"): random 
-		data: {
-			userEmail: depends on user
-			password: depends on user
-			id: if exists
-			status: if exists
-		}
-     }*/
-    // Converts the data to send to JSON
-    socket.formatToData = function(userEmail, password, id, status){ 
+    socket.toDataJSON = function(userEmail, password, id, status){ 
 		this.username = userEmail; 
 		this.password = password; 
         if (typeof id != undefined){ 
@@ -138,7 +126,7 @@
          }
          */
         createStatus: function (userEmail, password, status){
-            return socket.emit("CREATE_STATUS", new socket.formatToData(userEmail, password, null, status));
+            return socket.emit("CREATE_STATUS", new socket.toDataJSON(userEmail, password, null, status));
         }, 
 
         /*Received: {
@@ -146,7 +134,7 @@
          }
          */
         chageOrderingStatus: function (userEmail, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", new socket.formatToData(userEmail, password, orderID, orderStatus));
+            return socket.emit("CHANGE_ORDERING_STATUS", new socket.toDataJSON(userEmail, password, orderID, orderStatus));
         }, 
 
         /*Received: {
@@ -154,7 +142,7 @@
          }
          */
         createProjectStatus: function (userEmail, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", new socket.formatToData(userEmail, password, projectID, projectStatus));
+            return socket.emit("CREATE_PROJECT_STATUS", new socket.toDataJSON(userEmail, password, projectID, projectStatus));
         }, 
 
         /*Received: {
@@ -165,7 +153,7 @@
          }
          */
         getProjects: function (userEmail, password) {
-            return socket.emit("GET_PROJECTS", new socket.formatToData(userEmail, password, null, null));
+            return socket.emit("GET_PROJECTS", new socket.toDataJSON(userEmail, password, null, null));
         }, 
 
         /*Received: {
@@ -176,7 +164,7 @@
          }
          */
         getOrders: function (userEmail, password) {
-            return socket.emit("GET_ORDERS", new socket.formatToData(userEmail, password, null, null));
+            return socket.emit("GET_ORDERS", new socket.toDataJSON(userEmail, password, null, null));
         }, 
 
         /*Received: {
@@ -197,7 +185,7 @@
          }
          */
         getProject: function (userEmail, password, projectID) {
-            return socket.emit("GET_PROJECT", new socket.formatToData(userEmail, password, projectID, null));
+            return socket.emit("GET_PROJECT", new socket.toDataJSON(userEmail, password, projectID, null));
         }, 
 
         /*Received: {
@@ -218,7 +206,7 @@
          }
          */
         getOrder: function (userEmail, password, orderID) {
-            return socket.emit("GET_ORDER", new socket.formatToData(userEmail, password, orderID, null));
+            return socket.emit("GET_ORDER", new socket.toDataJSON(userEmail, password, orderID, null));
         }
         
     };

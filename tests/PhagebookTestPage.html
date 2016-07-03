@@ -25,6 +25,12 @@
 
         <script>
             $(document).ready(function() { 
+            	/*
+					HOW TO TEST THE API
+					1. Download MongoDB, Clotho3, Clotho3JavaAPI, citationsAPI, Phagebook, and PhagebookJSAPI.js.
+					2. Run "sudo yourMongoDBDirectory/bin/mongod", ClothoTestEnvironment, Build Clotho3JavaAPI, Build citationsAPI, Run PhagebookSocketServer, and open this html page.
+					3. Press each buttons in order from left.
+            	*/
                 $("#connect").click(function() {
                 	console.log(Phagebook);
                 	alert("Check console for connectivity. Now, go to local Phagebook and create a project and an order.");
