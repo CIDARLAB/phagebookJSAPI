@@ -6,7 +6,6 @@
         <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.js"></script>
-        
         <script type="text/javascript" src="../phagebookAPI.js"></script>
 
         <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
@@ -37,39 +36,49 @@
                 });
                 $("#createStatus").click(function() {
                     Phagebook.createStatus("joonhohan365@gmail.com","12345","Weehee PB API Works! ID:" + Math.random()).then(function(data) {
-                        alert(data);
+                    	console.log(data)
                     }).done();
                 });
                 $("#getProjects").click(function() {
                     Phagebook.getProjects("joonhohan365@gmail.com","12345").then(function(data) {
-                    	window.tempProjectID = data[0];
-                        alert(data);
+                    	window.tempProjectID = data[0].projectId;
+                    	console.log("All projects!!!!!!")
+                    	for(var i=0; i < data.length; i++){
+                    		console.log(data[i])
+                    	}
                     }).done();
                 });
                 $("#getProject").click(function() {
                     Phagebook.getProject("joonhohan365@gmail.com","12345",tempProjectID).then(function(data) {
-                        alert(data);
+                    	console.log("The golden egg laying goose")
+                    	console.log(data) 	
                     }).done();
                 });
                 $("#createProjectStatus").click(function() {
                     Phagebook.createProjectStatus("joonhohan365@gmail.com","12345",tempProjectID,"Project status #" + Math.random()).then(function(data) {
-                        alert(data);
+                    	console.log("The brown fox")
+                    	console.log(data)
                     }).done();
                 });
                 $("#getOrders").click(function() {
                     Phagebook.getOrders("joonhohan365@gmail.com","12345").then(function(data) {
-                    	window.tempOrderID = data[0];
-                        alert(data);
+                    	window.tempOrderID = data[0].orderId;
+                    	console.log("JUMPED!")
+                    	for(var i=0; i < data.length; i++){
+                    		console.log(data[i])
+                    	}
                     }).done();
                 });
                 $("#getOrder").click(function() {
                 	Phagebook.getOrder("joonhohan365@gmail.com","12345",tempOrderID).then(function(data){
-                		alert(data);
+                    	console.log("The lazy dog")
+                    	console.log(data)
                 	});
                 });
                 $("#changeOrderingStatus").click(function() {
-                    Phagebook.createProjectStatus("joonhohan365@gmail.com","12345",tempOrderID,"Order status #" + Math.random()).then(function(data) {
-                        alert(data);
+                    Phagebook.changeOrderingStatus("joonhohan365@gmail.com","12345",tempOrderID,"Order status #" + Math.random()).then(function(data) {
+                    	console.log("peed...")
+                    	console.log(data)
                     }).done();
                 });
             });

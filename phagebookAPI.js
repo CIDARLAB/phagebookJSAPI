@@ -13,7 +13,7 @@
     //                                              WebSocket                                                //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var socket = new WebSocket("ws://cidarlab.org:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
+    var socket = new WebSocket("ws://localhost:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
     socket.messageCache = []; // Queue of potential socket messages that were sent before the socket was opened.
 
     socket.onopen = function() {
@@ -26,6 +26,7 @@
         for (var i=0; i < socket.messageCache.length; i++){
             socket.send(socket.messageCache[i]);
         }
+        socket.messageCache = []
     };
 
     // Process the message received
@@ -50,6 +51,8 @@
     socket.sendwhenready = function(message) {
         if (socket.readyState == 1) {
             socket.send(message);
+	        // for (var i=0; i < socket.messageCache.length; i++)
+	        //     socket.send(socket.messageCache[i]);
         }
         else {
             console.log("caching " + message);
@@ -69,7 +72,7 @@
     }
 
 	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
-    socket.toDataJSON = function(userEmail, password, id, status){ 
+    function FormattedData(userEmail, password, id, status){ 
 		this.username = userEmail; 
 		this.password = password; 
         if (typeof id != undefined){ 
@@ -91,20 +94,22 @@
 
     // Helper function: Sends message to server 
     // Will be called multiple times, changing "lastRequestId".
-    socket.emit = function(channel, data) {
-        // Create 'deferred' object ... Q is a global variable
-        var deferred = Q.defer();
-
-        var requestID = nextId();
-        var message = new Message(channel, data, requestID, null);
-        var callback = function(dataFromServer) {
-            deferred.resolve(dataFromServer);
-        };
-        
-        // Hash callback function: (channel + requestID) because we need to distinguish between "say" messages and desired responses from server. 
-        callbackHash[channel + requestID] = callback; /////////// Indexing the hashtable.
-        socket.sendwhenready(JSON.stringify(message));
-        return deferred.promise;
+    socket.emit = function(channel, userEmail, password, id, status) {
+    
+            var requestID = nextId();
+            var data = new FormattedData(userEmail, password, id, status)
+            var message = new Message(channel, data, requestID, null);
+            
+            // Create 'deferred' object ... Q is a global variable
+            var deferred = Q.defer();
+            var callback = function(dataFromServer) {
+                deferred.resolve(dataFromServer);
+            };
+            // Hash callback function: (channel + requestID) because we need to distinguish between "say" messages and desired responses from server. 
+            callbackHash[channel + requestID] = callback; /////////// Indexing the hashtable.
+            
+            socket.sendwhenready(JSON.stringify(message));
+            return deferred.promise;
     };
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -126,15 +131,15 @@
          }
          */
         createStatus: function (userEmail, password, status){
-            return socket.emit("CREATE_STATUS", new socket.toDataJSON(userEmail, password, null, status));
+            return socket.emit("CREATE_STATUS", userEmail, password, null, status);
         }, 
 
         /*Received: {
 			data: "Status changed blah blah"
          }
          */
-        chageOrderingStatus: function (userEmail, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", new socket.toDataJSON(userEmail, password, orderID, orderStatus));
+        changeOrderingStatus: function (userEmail, password, orderID, orderStatus) {
+            return socket.emit("CHANGE_ORDERING_STATUS", userEmail, password, orderID, orderStatus);
         }, 
 
         /*Received: {
@@ -142,18 +147,18 @@
          }
          */
         createProjectStatus: function (userEmail, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", new socket.toDataJSON(userEmail, password, projectID, projectStatus));
+            return socket.emit("CREATE_PROJECT_STATUS", userEmail, password, projectID, projectStatus);
         }, 
 
         /*Received: {
-			data: [
+			data: {
 				projectId: B@#^EF@I#E
 				projectName: NF@$O&*G$
-			] x However many Projects there are
+			} x However many Projects there are
          }
          */
         getProjects: function (userEmail, password) {
-            return socket.emit("GET_PROJECTS", new socket.toDataJSON(userEmail, password, null, null));
+            return socket.emit("GET_PROJECTS", userEmail, password);
         }, 
 
         /*Received: {
@@ -164,7 +169,7 @@
          }
          */
         getOrders: function (userEmail, password) {
-            return socket.emit("GET_ORDERS", new socket.toDataJSON(userEmail, password, null, null));
+            return socket.emit("GET_ORDERS", userEmail, password);
         }, 
 
         /*Received: {
@@ -185,7 +190,7 @@
          }
          */
         getProject: function (userEmail, password, projectID) {
-            return socket.emit("GET_PROJECT", new socket.toDataJSON(userEmail, password, projectID, null));
+            return socket.emit("GET_PROJECT", userEmail, password, projectID);
         }, 
 
         /*Received: {
@@ -206,7 +211,7 @@
          }
          */
         getOrder: function (userEmail, password, orderID) {
-            return socket.emit("GET_ORDER", new socket.toDataJSON(userEmail, password, orderID, null));
+            return socket.emit("GET_ORDER", userEmail, password, orderID);
         }
         
     };
