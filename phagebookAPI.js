@@ -51,8 +51,6 @@
     socket.sendwhenready = function(message) {
         if (socket.readyState == 1) {
             socket.send(message);
-	        // for (var i=0; i < socket.messageCache.length; i++)
-	        //     socket.send(socket.messageCache[i]);
         }
         else {
             console.log("caching " + message);
