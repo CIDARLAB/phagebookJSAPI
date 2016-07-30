@@ -13,7 +13,7 @@
     //                                              WebSocket                                                //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    var socket = new WebSocket("ws://localhost:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
+    var socket = new WebSocket("ws://cidarlab.org:9090/websocket/"); // Change this address to CNAME of Phagebook when using in real life environment
     socket.messageCache = []; // Queue of potential socket messages that were sent before the socket was opened.
 
     socket.onopen = function() {
