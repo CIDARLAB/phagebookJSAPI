@@ -124,6 +124,12 @@
     	*	if something else should be passed on, but we'll see. - Joonho Han.
     	*/
 
+        INPROGRESS: "INPROGRESS",
+        APPROVED: "APPROVED",
+        SUBMITTED: "SUBMITTED",
+        DENIED: "DENIED",
+        RECEIVED: "RECEIVED",
+
          /*Received: {
 			data: "Status created blah blah"
          }

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>Phagebook Test Page</title>
-        <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="crossorigin="anonymous"></script>
 
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.js"></script>
         <script type="text/javascript" src="../phagebookAPI.js"></script>
@@ -30,56 +30,60 @@
 					2. Run "sudo yourMongoDBDirectory/bin/mongod", ClothoTestEnvironment, Build Clotho3JavaAPI, Build citationsAPI, Run PhagebookSocketServer, and open this html page.
 					3. Press each buttons in order from left.
             	*/
+
+            	var username = "1234@qwer.com";
+            	var password = "12345";
+            	
                 $("#connect").click(function() {
                 	console.log(Phagebook);
                 	alert("Check console for connectivity. Now, go to local Phagebook and create a project and an order.");
                 });
                 $("#createStatus").click(function() {
-                    Phagebook.createStatus("joonhohan365@gmail.com","12345","Weehee PB API Works! ID:" + Math.random()).then(function(data) {
+                    Phagebook.createStatus(username,password,"Weehee PB API Works! ID:" + Math.random()).then(function(data) {
                     	console.log(data)
-                    }).done();
+                    });
                 });
                 $("#getProjects").click(function() {
-                    Phagebook.getProjects("joonhohan365@gmail.com","12345").then(function(data) {
+                    Phagebook.getProjects(username,password).then(function(data) {
                     	window.tempProjectID = data[0].projectId;
                     	console.log("All projects!!!!!!")
                     	for(var i=0; i < data.length; i++){
                     		console.log(data[i])
                     	}
-                    }).done();
+                    });
                 });
                 $("#getProject").click(function() {
-                    Phagebook.getProject("joonhohan365@gmail.com","12345",tempProjectID).then(function(data) {
+                    Phagebook.getProject(username,password,tempProjectID).then(function(data) {
                     	console.log("The golden egg laying goose")
                     	console.log(data) 	
-                    }).done();
+                    });
                 });
                 $("#createProjectStatus").click(function() {
-                    Phagebook.createProjectStatus("joonhohan365@gmail.com","12345",tempProjectID,"Project status #" + Math.random()).then(function(data) {
+                    Phagebook.createProjectStatus(username,password,tempProjectID,"Project status #" + Math.random()).then(function(data) {
                     	console.log("The brown fox")
                     	console.log(data)
-                    }).done();
+                    });
                 });
                 $("#getOrders").click(function() {
-                    Phagebook.getOrders("joonhohan365@gmail.com","12345").then(function(data) {
+                    Phagebook.getOrders(username,password).then(function(data) {
                     	window.tempOrderID = data[0].orderId;
                     	console.log("JUMPED!")
                     	for(var i=0; i < data.length; i++){
                     		console.log(data[i])
                     	}
-                    }).done();
+                    });
                 });
                 $("#getOrder").click(function() {
-                	Phagebook.getOrder("joonhohan365@gmail.com","12345",tempOrderID).then(function(data){
+                	Phagebook.getOrder(username,password,tempOrderID).then(function(data){
                     	console.log("The lazy dog")
                     	console.log(data)
                 	});
                 });
                 $("#changeOrderingStatus").click(function() {
-                    Phagebook.changeOrderingStatus("joonhohan365@gmail.com","12345",tempOrderID,"Order status #" + Math.random()).then(function(data) {
+                    Phagebook.changeOrderingStatus(username,password,tempOrderID,Phagebook.SUBMITTED).then(function(data) {
                     	console.log("peed...")
                     	console.log(data)
-                    }).done();
+                    });
                 });
             });
         </script>
