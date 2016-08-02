@@ -1,4 +1,4 @@
-# Phagebook API  <img align="right" src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" width="900" height="200"/>
+# Phagebook API  <img align="right" src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" width="90" height="20"/>
 <!-- ![](http://cidarlab.org/wp-content/uploads/2013/08/research-clotho.png) -->
 
 ## Purpose
