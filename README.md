@@ -22,7 +22,7 @@ To provide an accessible and robust API for writing client-side code to leverage
 * [About Clotho](http://cidarlab.org/clotho/)
 
 ## API
-### .create()
+### .createStatus()
 > Creates the specified Clotho object(s). <br/>
 > 
 > **Input:** (JSON object) An object describing an instance or instances of a Clotho schema.<br/>
@@ -32,7 +32,7 @@ To provide an accessible and robust API for writing client-side code to leverage
 > > + If the specification includes an 'id' field the object will receive that ID value. Otherwise a unique ID will be created.
 > > + Status notifications are reported on the 'say' channel regarding successfulness of object creation. If an object failed to be created, an explanation will also be reported.
 
-### .destroy()
+### .createProjectStatus()
 > Destroys the specified Clotho object. <br/>
 > 
 > **Input:** (Object selector) A String representing the Clotho object's *name* or *unique ID* targeted for deletion. <br/>
@@ -42,7 +42,7 @@ To provide an accessible and robust API for writing client-side code to leverage
 > > + Clotho will fail to destroy an object if given an ambiguous object selector.
 > > + An error message is reported on the 'say' channel if `Clotho.destroy()` fails.
 
-### .set()
+### .changeOrderingStatus()
 > Sets all fields present in the object spec to their associated values for the Clotho object represented by the object ID. <br/>
 > 
 > **Input:** (JSON object) An object spec or list of multiple object specs containing field-value pairs to be set. Each object spec must contain the object ID to be modified. <br/> 
@@ -54,7 +54,7 @@ To provide an accessible and robust API for writing client-side code to leverage
 > > + If a new field is encoded in the object spec, it will be added to the existing object.
 > > + If the object does not exist or if an object ID is not provided, the object is then constructed by way of `Clotho.create()`.
 
-### .get()
+### .getProjects()
 > Gets a specified Clotho object. <br/>
 > 
 > **Input:** (Object selector) A String representing the desired Clotho object's *name* or *unique ID*. <br/>
@@ -64,19 +64,19 @@ To provide an accessible and robust API for writing client-side code to leverage
 > > + If the input object selector is ambiguous Clotho will return the first object posted by MongoDB (essentially arbitrarty).
 > > + Clotho will report an error message on the 'say' channel if an object could not be retrieved.
 
-### .query()
+### .getProject()
 > Queries for all Clotho objects matching the specified criteria. <br/>
 > 
 > **Input:** (JSON object) An object spec. <br/>
 > **Returns:** All objects matching the fields provided in the spec.
 
-### .queryOne()
+### .getOrders()
 > Queries for any single Clotho object matching the specified criteria. <br/>
 > 
 > **Input:** (JSON object) An object spec. <br/>
 > **Returns:** The *first* object matching the fields provided in the spec.
 
-### .run()
+### .getOrder()
 > Executes the specified function with the given input parameters. <br/>
 > 
 > **Input:** (JSON object) An object containing the following two field-value pairs <br/>
@@ -90,32 +90,6 @@ To provide an accessible and robust API for writing client-side code to leverage
 > >     1. There is an error during function execution,
 > >     2. There is no function matching the function specifier, 
 > >     3. There exist ambiguously specified arguments.
-
-### .submit()
-> Executes the input script. <br/>
-> 
-> **Input:** (String) The script to be executed as a String. <br/>
-> **Returns:** The value returned from executing the specified script on the server-side scripting environment. <br/>
-
-> **Notes:** JavaScript is currently the only language Clotho will accept.
-
-### .login()
-> Attempts to log in with the specified *username* and *password*. <br/>
-> 
-> **Input:** (JSON object) An object containing the following two field-value pairs <br/>
-> > 'username': The login username. <br/>
-> > 'password': The password for the the login attempt. <br/>
-
-> **Returns:** True if login attempt succeeds and false if the login attempt fails. <br/>
-
-> **Notes:**
-> > + After successfully logging in, all commands thereafter will be executed with that user's identity.
-
-### .logout()
-> Attempts to log out if a user is currently logged in. <br/>
-> 
-> **Input:** (N/A) Logout does not take any input. <br/>
-> **Returns:** True if the connection was previously bound to a user (i.e. a user was logged in) and false if no one is logged in.<br/>
 
 ## Examples
 All examples below include the use of 'q' promises in order to emphasize the requisite use of the q.js library for asynchronous communication with the server.

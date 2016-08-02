@@ -103,7 +103,8 @@
             var callback = function(dataFromServer) {
                 deferred.resolve(dataFromServer);
             };
-            // Hash callback function: (channel + requestID) because we need to distinguish between "say" messages and desired responses from server. 
+            // Hash callback function: (channel + requestID) because we need to distinguish between "say" messages and desired responses from server.
+            
             callbackHash[channel + requestID] = callback; /////////// Indexing the hashtable.
             
             socket.sendwhenready(JSON.stringify(message));
