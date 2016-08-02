@@ -1,4 +1,4 @@
-# <img src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" width="180" height="40"/> API
+# <img src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" width="270" height="60"/> API
 <!-- ![](http://cidarlab.org/wp-content/uploads/2013/08/research-clotho.png) -->
 
 ## Purpose
