@@ -1,8 +1,8 @@
-# Clotho 3.0 API  <img align="right" src="http://cidarlab.org/wp-content/uploads/2013/08/research-clotho.png" />
+# Phagebook API  <img align="right" src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" />
 <!-- ![](http://cidarlab.org/wp-content/uploads/2013/08/research-clotho.png) -->
 
 ## Purpose
-To provide an accessible and robust API for writing client-side code to leverage the powerful Clotho back-end functionality.
+To connect to phagebook. Period.
 
 ## Getting Started
 
