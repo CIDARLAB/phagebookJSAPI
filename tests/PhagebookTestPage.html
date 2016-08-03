@@ -6,14 +6,15 @@
         <script src="https://code.jquery.com/jquery-3.1.0.min.js"integrity="sha256-cCueBR6CsyA4/9szpPfrX3s49M9vUU5BgtiJj06wt/s="crossorigin="anonymous"></script>
 
         <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/q.js/1.0.0/q.js"></script>
-        <script type="text/javascript" src="../phagebookAPI.min.js"></script>
+        <script type="text/javascript" src="../phagebookAPI.js"></script>
 
         <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
         <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 
     </head>
     <body>
-        <button id="connect" type="button" class="btn btn-primary btn-lg">Connect</button>
+        <button id="aconnect" type="button" class="btn btn-primary btn-lg">Async Connect</button>
+        <button id="sconnect" type="button" class="btn btn-primary btn-lg">Sync Connect</button>
         <button id="createStatus" type="button" class="btn btn-success btn-lg">Create Status</button>
         <button id="getProjects" type="button" class="btn btn-success btn-lg">Get Projects</button>
         <button id="getProject" type="button" class="btn btn-success btn-lg">Get Project</button>
@@ -28,15 +29,104 @@
 					HOW TO TEST THE API
 					1. Download MongoDB, Clotho3, Clotho3JavaAPI, citationsAPI, Phagebook, and PhagebookJSAPI.js.
 					2. Run "sudo yourMongoDBDirectory/bin/mongod", ClothoTestEnvironment, Build Clotho3JavaAPI, Build citationsAPI, Run PhagebookSocketServer, and open this html page.
-					3. Press each buttons in order from left.
+					3. Create a project and an order using any phagebook account, and save the account username and password below.
+					4. Press each buttons in order from left.
             	*/
 
             	var username = "1234@qwer.com";
             	var password = "1234";
             	
-                $("#connect").click(function() {
-                	console.log(Phagebook);
-                	alert("Check console for connectivity. Now, go to local Phagebook and create a project and an order.");
+                $("#aconnect").click(function() {
+                	start = new Date().getTime()
+                	console.log("Asynchronous Socket");
+                    Phagebook.createStatus(username,password,"Weehee PB API Works! ID:" + Math.random()).then(function(data) {
+                    	console.log("1. " + data)
+                    });
+                    Phagebook.getProjects(username,password).then(function(data) {
+                    	console.log("2. All projects!!!!!!")
+                    	for(var i=0; i < data.length; i++){
+                    		console.log(data[i])
+                    	}
+                    	return data[0].projectId
+                    }).then(function(ID){
+	                    Phagebook.getProject(username,password,ID).then(function(data) {
+	                    	console.log("3. Got project")
+	                    	console.log(data) 	
+	                    });
+	                    Phagebook.createProjectStatus(username,password,ID,"Project status #" + Math.random()).then(function(data) {
+	                    	console.log("4. PROJECT STATUS")
+	                    	console.log(data)
+	                    });
+                    });
+                    Phagebook.getOrders(username,password).then(function(data) {
+                    	console.log("5. ALL ORDERS!!!!")
+                    	for(var i=0; i < data.length; i++){
+                    		console.log(data[i])
+                    	}
+                    	return data[0].orderId;
+                    }).then(function(ID){
+	                	Phagebook.getOrder(username,password,ID).then(function(data){
+	                    	console.log("6. Got order?")
+	                    	console.log(data)
+	                	});
+	                    Phagebook.changeOrderingStatus(username,password,ID,Phagebook.SUBMITTED).then(function(data) {
+	                    	console.log("7. ORDER STATUS")
+	                    	console.log(data)
+							console.log("Took " + (new Date().getTime() - start)/1000 + " seconds")
+	                    });
+                    });
+                    for (var i=0; i<1000; i++){
+                    	console.log(i)
+                    }
+					console.log("10000!\nDONE")
+                });
+                $("#sconnect").click(function() {
+                	start = new Date().getTime()
+                	console.log("Synchronous Socket");
+                    Phagebook.createStatus(username,password,"Weehee PB API Works! ID:" + Math.random()).then(function(data) {
+                    	console.log("1. " + data)
+                    }).then(function(){
+	                    Phagebook.getProjects(username,password).then(function(data) {
+	                    	console.log("2. All projects!!!!!!")
+	                    	for(var i=0; i < data.length; i++){
+	                    		console.log(data[i])
+	                    	}
+	                    	return data[0].projectId
+	                    }).then(function(ID){
+		                    Phagebook.getProject(username,password,ID).then(function(data) {
+		                    	console.log("3. Got project")
+		                    	console.log(data) 	
+		                    }).then(function(){
+			                    Phagebook.createProjectStatus(username,password,ID,"Project status #" + Math.random()).then(function(data) {
+			                    	console.log("4. PROJECT STATUS")
+			                    	console.log(data)
+			                    }).then(function(){
+				                    Phagebook.getOrders(username,password).then(function(data) {
+				                    	console.log("5. ALL ORDERS!!!!")
+				                    	for(var i=0; i < data.length; i++){
+				                    		console.log(data[i])
+				                    	}
+				                    	return data[0].orderId;
+				                    }).then(function(ID){
+					                	Phagebook.getOrder(username,password,ID).then(function(data){
+					                    	console.log("6. Got order?")
+					                    	console.log(data)
+					                	}).then(function(){
+						                    Phagebook.changeOrderingStatus(username,password,ID,Phagebook.SUBMITTED).then(function(data) {
+						                    	console.log("7. ORDER STATUS")
+						                    	console.log(data)
+							                    for (var i=0; i<1000; i++){
+							                    	console.log(i)
+							                    }
+							                    console.log("10000!\nDONE")
+												console.log("Took " + (new Date().getTime() - start)/1000 + " seconds")
+						                    });
+					                	});
+				                    });
+			                    });
+		                    });
+	                    });
+                    });
                 });
                 $("#createStatus").click(function() {
                     Phagebook.createStatus(username,password,"Weehee PB API Works! ID:" + Math.random()).then(function(data) {

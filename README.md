@@ -18,8 +18,8 @@ To connect to phagebook. Period.
 
 ### Resources
 * [Q Promise Reference](https://github.com/kriskowal/q/wiki/API-Reference)
-* [Official Clotho Website](http://www.clothocad.org/)
-* [About Clotho](http://cidarlab.org/clotho/)
+* [Official CIDAR Website](http://www.cidarlab.org/)
+* [About Phagebook](http://cidarlab.org/phagebook/)
 
 ## API
 ### .createStatus()
