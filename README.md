@@ -16,14 +16,14 @@ A normal desktop program executes functions/instructions one after another assum
 
 ## Installation
 
-### +Requirements
-    1. Kristopher Kowal's [Q Promise Library](https://github.com/kriskowal/q) for asynchronous server communication.<br />
-    *Simplest Approach: Copy and paste the following source script into your HTML's head.*
-    `<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min.js"></script>` 
+### Requirements
++ Kristopher Kowal's [Q Promise Library](https://github.com/kriskowal/q) for asynchronous server communication.<br />
++ *Simplest Approach: Copy and paste the following source script into your HTML's head.*
++ `<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min.js"></script>` 
     
-    2. **phagebookAPI.js:** Download the Phagebook API (or the minified version), add it to your project files, and import it as a `<script>` tag after the Q promise library. (loading this script itself will create a `Phagebook` global variable which is used to call any of the listed Phagebook functions below).
++ **phagebookAPI.js:** Download the Phagebook API (or the minified version), add it to your project files, and import it as a `<script>` tag after the Q promise library. (loading this script itself will create a `Phagebook` global variable which is used to call any of the listed Phagebook functions below).
     
-    3. **Install Phagebook:** Follow the instructions outlined [here](https://github.com/CIDARLAB/Phagebook3/wiki/Installing-Phagebook-3.0).
++ **Install Phagebook:** Follow the instructions outlined [here](https://github.com/CIDARLAB/Phagebook3/wiki/Installing-Phagebook-3.0).
 
 ### Resources
 * [Q Promise Reference](https://github.com/kriskowal/q/wiki/API-Reference)
