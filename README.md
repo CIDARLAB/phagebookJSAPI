@@ -31,94 +31,91 @@ A normal desktop program executes functions/instructions one after another assum
 * [About Phagebook](http://cidarlab.org/phagebook/)
 
 ## API
-All functions return a deferred object. It's not important to know what exactly it is, but there are plenty of explanations on what deferred is on the internet. Thus, I won't explain it here. It's important to read the Examples to understand how to use the API.
+All functions return a [deferred](https://github.com/kriskowal/q/wiki/API-Reference#promise-creation) object. It's not important to know what exactly it is, but there are plenty of explanations on what deferred is on the internet. Thus, I won't explain it here. It's important to read the Examples to understand how to use the API.
 
 ### .createStatus(String userEmail, String password, String status)
 > Creates a new Phagebook status on the user profile. <br/>
 > 
 > **Sends:** Request to create a status for the specified user.<br/>
-> **Receives:** If successful, "Status created successfully." If failed, it does not return anything. <br/>
+> **Receives:** If successful, a message "Status created successfully." If failed, it does not receive anything. <br/>
 
 ### .getProjects(String userEmail, String password)
 > Gets a list of projects the user is working on.<br/>
 > 
 > **Sends:** Request for the projects the specified user is currently working on. <br/>
 > **Receives:** An array of JSON objects with following parameters: <br/>
-> > { 
-> >		projectName;
-> >		projectId;
-> >	}
+> > { <br/>
+> >		projectName;<br/>
+> >		projectId;<br/>
+> >	}<br/>
 
 ### .getProject(String userEmail, String password, String projectId)
 > Queries for a detailed info of a project. <br/>
 > 
-> **Sends:** (JSON object) An object spec. <br/>
+> **Sends:** Request for the object info. <br/>
 > **Receives:** A JSON Object with the following parameters:
-> >	{
-> >		creatorId;
-> > 	leadId;
-> > 	members;
-> > 	notebooks;
-> > 	affiliatedLabs;
-> > 	name;
-> >     dateCreated;
-> >     updates;
-> >     budget;
-> >     grantId;
-> >     description;
-> >     id;
-> >	}
+> >	{<br/>
+> >		creatorId;<br/>
+> > 	leadId;<br/>
+> > 	members;<br/>
+> > 	notebooks;<br/>
+> > 	affiliatedLabs;<br/>
+> > 	name;<br/>
+> >     dateCreated;<br/>
+> >     updates;<br/>
+> >     budget;<br/>
+> >     grantId;<br/>
+> >     description;<br/>
+> >     id;<br/>
+> >	}<br/>
 
-### .createProjectStatus(String userEmail, String password, String orderID, String orderStatus)
-> Destroys the specified Phagebook object. <br/>
+### .createProjectStatus(String userEmail, String password, String projectID, String projectStatus)
+> Adds a new status message for a specific project. <br/>
 > 
-> **Sends:** (Object selector) A String representing the Phagebook object's *name* or *unique ID* targeted for deletion. <br/>
-> **Receives:** N/A <br/>
+> **Sends:** Request for additional project status. <br/>
+> **Receives:** If successful, a message "Status created successfully." If failed, it does not receive anything. <br/>
 
-> **Notes:**
-> > + Phagebook will fail to destroy an object if given an ambiguous object selector.
-> > + An error message is reported on the 'say' channel if `Phagebook.destroy()` fails.
-
-### .getOrders()
-> Queries for any single Phagebook object matching the specified criteria. <br/>
+### .getOrders(String userEmail, String password)
+> Gets a list of orders the user have requested and is currently pending.<br/>
 > 
-> **Sends:** (JSON object) An object spec. <br/>
-> **Receives:** The *first* object matching the fields provided in the spec.
+> **Sends:** Request for the orders for the specified user. <br/>
+> **Receives:** An array of JSON objects with following parameters: <br/>
+> > { <br/>
+> >		orderName;<br/>
+> >		orderId;<br/>
+> >	}<br/>
 
-### .getOrder()
-> Executes the specified function with the given input parameters. <br/>
+### .getOrder(String userEmail, String password, String orderID)
+> Queries for a detailed info of an order. <br/>
 > 
-> **Sends:** (JSON object) An object containing the following two field-value pairs <br/>
-> > 'function': An object selector for the desired function to be executed. <br/>
-> > 'args': An ordered list of input arguments. <br/>
+> **Sends:** Request for the object info. <br/>
+> **Receives:** A JSON Object with the following parameters:
+> >	{<br/>
+> >		id;<br/>
+> >		name;<br/>
+> >		description;<br/>
+> >		dateCreated;<br/>
+> >		createdById;<br/>
+> >		products;<br/>
+> >		budget;<br/>
+> >		maxOrderSize;<br/>
+> >		approvedById;<br/>
+> >		receivedById;<br/>
+> >		relatedProjects;<br/>
+> >		status;<br/>
+> >	}<br/>
 
-> **Receives:** The evaluated value of the function executed with the specified arguments. <br/>
-
-> **Notes:**
-> > + Phagebook will send an error message on the 'say' channel if:
-> >     1. There is an error during function execution,
-> >     2. There is no function matching the function specifier, 
-> >     3. There exist ambiguously specified arguments.
-
-### .changeOrderingStatus()
-> Sets all fields present in the object spec to their associated values for the Phagebook object represented by the object ID. <br/>
+### .changeOrderingStatus(String userEmail, String password, String orderID, String ORDERSTATUS)
+> Changes the state of the specific order. ORDERSTATUS must be one of the predefined values:<br/>
+> Phagebook.INPROGRESS<br/>
+> Phagebook.APPROVED<br/>
+> Phagebook.SUBMITTED<br/>
+> Phagebook.DENIED<br/>
+> Phagebook.RECEIVED<br/>
 > 
-> **Sends:** (JSON object) An object spec or list of multiple object specs containing field-value pairs to be set. Each object spec must contain the object ID to be modified. <br/> 
-> **Receives:** The ID of the modified/created object. <br/>
- 
-> **Notes:**
-> > + The object spec must include the object ID.
-> > + Fields present in the original object but not in the input object spec are unchanged.
-> > + If a new field is encoded in the object spec, it will be added to the existing object.
-> > + If the object does not exist or if an object ID is not provided, the object is then constructed by way of `Phagebook.create()`.
-<!-- 
+> **Sends:** Request to change order status. <br/>
+> **Receives:** If successful, a message "Status created successfully." If failed, it does not receive anything. <br/>
 
-
-
-
-
-
- -->
 ## Examples
 All examples below include the use of 'q' promises in order to emphasize the requisite use of the q.js library for asynchronous communication with the server.
 
