@@ -1,8 +1,14 @@
 # <img src="http://cidarlab.org/wp-content/uploads/2015/09/phagebook_AWH.png" width="270" height="60"/> API
 <!-- ![](http://cidarlab.org/wp-content/uploads/2013/08/research-clotho.png) -->
 
-## Purpose
-To connect to phagebook. Period.
+## What is this?
+An API to interact with Phagebook.
+Background: Phagebook is a social/lab networking web app where synthetic biologists can post specific lab projects or order lab stock across labs. For more information, please check out the <a href="http://cidarlab.org/phagebook/">CIDAR Phagebook page</a>.
+
+## Table of Contents
+	1. Getting started
+	2. API
+	3. Examples
 
 ## Getting Started
 
@@ -90,7 +96,14 @@ To connect to phagebook. Period.
 > >     1. There is an error during function execution,
 > >     2. There is no function matching the function specifier, 
 > >     3. There exist ambiguously specified arguments.
+<!-- 
 
+
+
+
+
+
+ -->
 ## Examples
 All examples below include the use of 'q' promises in order to emphasize the requisite use of the q.js library for asynchronous communication with the server.
 

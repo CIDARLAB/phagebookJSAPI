@@ -70,7 +70,7 @@
     }
 
 	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
-    function FormattedData(userEmail, password, id, status){ 
+    socket.FormattedData = function(userEmail, password, id, status){ 
 		this.username = userEmail; 
 		this.password = password; 
         if (typeof id != undefined){ 
@@ -92,11 +92,10 @@
 
     // Helper function: Sends message to server 
     // Will be called multiple times, changing "lastRequestId".
-    socket.emit = function(channel, userEmail, password, id, status) {
+    socket.emit = function(channel, data, options) {
     
             var requestID = nextId();
-            var data = new FormattedData(userEmail, password, id, status)
-            var message = new Message(channel, data, requestID, null);
+            var message = new Message(channel, data, requestID, options);
             
             // Create 'deferred' object ... Q is a global variable
             var deferred = Q.defer();
@@ -136,7 +135,7 @@
          }
          */
         createStatus: function (userEmail, password, status){
-            return socket.emit("CREATE_STATUS", userEmail, password, null, status);
+            return socket.emit("CREATE_STATUS", new socket.FormattedData(userEmail, password, null, status));
         }, 
 
         /*Received: {
@@ -144,7 +143,7 @@
          }
          */
         changeOrderingStatus: function (userEmail, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", userEmail, password, orderID, orderStatus);
+            return socket.emit("CHANGE_ORDERING_STATUS", new socket.FormattedData(userEmail, password, orderID, orderStatus));
         }, 
 
         /*Received: {
@@ -152,7 +151,7 @@
          }
          */
         createProjectStatus: function (userEmail, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", userEmail, password, projectID, projectStatus);
+            return socket.emit("CREATE_PROJECT_STATUS", new socket.FormattedData(userEmail, password, projectID, projectStatus));
         }, 
 
         /*Received: {
@@ -163,7 +162,7 @@
          }
          */
         getProjects: function (userEmail, password) {
-            return socket.emit("GET_PROJECTS", userEmail, password);
+            return socket.emit("GET_PROJECTS", new socket.FormattedData(userEmail, password));
         }, 
 
         /*Received: {
@@ -174,7 +173,7 @@
          }
          */
         getOrders: function (userEmail, password) {
-            return socket.emit("GET_ORDERS", userEmail, password);
+            return socket.emit("GET_ORDERS", new socket.FormattedData(userEmail, password));
         }, 
 
         /*Received: {
@@ -195,7 +194,7 @@
          }
          */
         getProject: function (userEmail, password, projectID) {
-            return socket.emit("GET_PROJECT", userEmail, password, projectID);
+            return socket.emit("GET_PROJECT", new socket.FormattedData(userEmail, password, projectID));
         }, 
 
         /*Received: {
@@ -216,7 +215,7 @@
          }
          */
         getOrder: function (userEmail, password, orderID) {
-            return socket.emit("GET_ORDER", userEmail, password, orderID);
+            return socket.emit("GET_ORDER", new socket.FormattedData(userEmail, password, orderID));
         }
         
     };
