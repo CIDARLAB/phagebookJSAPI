@@ -2,7 +2,7 @@
 <!-- ![](http://cidarlab.org/wp-content/uploads/2013/08/research-Phagebook.png) -->
 
 ## What is this?
-An API to interact with Phagebook.
+An API to interact with Phagebook.<br/>
 Background: Phagebook is a social/lab networking web app where synthetic biologists can post specific lab projects or order lab stock across labs. For more information, please check out the <a href="http://cidarlab.org/phagebook/">CIDAR Phagebook page</a>.
 
 ## Table of Contents
@@ -14,10 +14,9 @@ Background: Phagebook is a social/lab networking web app where synthetic biologi
 ## Background
 A normal desktop program executes functions/instructions one after another assuming the argument/data are always ready. However, this is not always the case in a networking environment. For example, when a function argument requires data from the server, it may take time to fetch the data before executing the function. This produces code blocking, a pause in the thread between data request signal and data retrieval. Asynchronous programming means to send another request to the server while blocking is happening, so you don't have to wait until the first fetch is completed to request the next data. Since asynchronous code is executed in a different way from how most people view software execution, a different style of syntax is required. Phagebook API uses asynchronous programming with a websocket, we'll look at the examples to show both asynchronous syntax and the API how-to.
 
-## Getting Started
+## Installation
 
-### Installation
-+ **Requirements:** 
+### Requirements
     1. Kristopher Kowal's [Q Promise Library](https://github.com/kriskowal/q) for asynchronous server communication.<br />
     *Simplest Approach: Copy and paste the following source script into your HTML's head.*
     `<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.6/q.min.js"></script>` 
