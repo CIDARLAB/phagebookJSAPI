@@ -69,20 +69,6 @@
         }
     }
 
-	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
-    socket.FormattedData = function(userEmail, password, id, status){ 
-		this.username = userEmail; 
-		this.password = password; 
-        if (typeof id != undefined){ 
-        // Create "id" parameter only when the protocol has id.
-            this.id = id;
-        }
-        if (typeof status != undefined){ 
-        // Create "status" parameter only when the protocol has status.
-            this.status = status;
-        }
-    }
-
     // A generator would be nice
     var lastRequestId = -1;
     function nextId(){
@@ -110,6 +96,20 @@
             return deferred.promise;
     };
 
+	// Helper function to initialize the "data" parameter of the JSON object the server socket accepts
+    var FormattedData = function(userEmail, password, id, status){ 
+		this.username = userEmail; 
+		this.password = password; 
+        if (typeof id != undefined){ 
+        // Create "id" parameter only when the protocol has id.
+            this.id = id;
+        }
+        if (typeof status != undefined){ 
+        // Create "status" parameter only when the protocol has status.
+            this.status = status;
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     //                                          Phagebook Object                                             //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@
          }
          */
         createStatus: function (userEmail, password, status){
-            return socket.emit("CREATE_STATUS", new socket.FormattedData(userEmail, password, null, status));
+            return socket.emit("CREATE_STATUS", new FormattedData(userEmail, password, null, status));
         }, 
 
         /*Received: {
@@ -143,7 +143,7 @@
          }
          */
         changeOrderingStatus: function (userEmail, password, orderID, orderStatus) {
-            return socket.emit("CHANGE_ORDERING_STATUS", new socket.FormattedData(userEmail, password, orderID, orderStatus));
+            return socket.emit("CHANGE_ORDERING_STATUS", new FormattedData(userEmail, password, orderID, orderStatus));
         }, 
 
         /*Received: {
@@ -151,7 +151,7 @@
          }
          */
         createProjectStatus: function (userEmail, password, projectID, projectStatus) {
-            return socket.emit("CREATE_PROJECT_STATUS", new socket.FormattedData(userEmail, password, projectID, projectStatus));
+            return socket.emit("CREATE_PROJECT_STATUS", new FormattedData(userEmail, password, projectID, projectStatus));
         }, 
 
         /*Received: {
@@ -162,7 +162,7 @@
          }
          */
         getProjects: function (userEmail, password) {
-            return socket.emit("GET_PROJECTS", new socket.FormattedData(userEmail, password));
+            return socket.emit("GET_PROJECTS", new FormattedData(userEmail, password));
         }, 
 
         /*Received: {
@@ -173,7 +173,7 @@
          }
          */
         getOrders: function (userEmail, password) {
-            return socket.emit("GET_ORDERS", new socket.FormattedData(userEmail, password));
+            return socket.emit("GET_ORDERS", new FormattedData(userEmail, password));
         }, 
 
         /*Received: {
@@ -194,7 +194,7 @@
          }
          */
         getProject: function (userEmail, password, projectID) {
-            return socket.emit("GET_PROJECT", new socket.FormattedData(userEmail, password, projectID));
+            return socket.emit("GET_PROJECT", new FormattedData(userEmail, password, projectID));
         }, 
 
         /*Received: {
@@ -215,7 +215,7 @@
          }
          */
         getOrder: function (userEmail, password, orderID) {
-            return socket.emit("GET_ORDER", new socket.FormattedData(userEmail, password, orderID));
+            return socket.emit("GET_ORDER", new FormattedData(userEmail, password, orderID));
         }
         
     };
